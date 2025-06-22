@@ -17,5 +17,6 @@ export default function WelcomePage(){
         router.push('signup')
     }
 
-    return()
+    return(
+    )
 }
