@@ -24,7 +24,6 @@ db.init_app(app)
 
 @app.before_first_request
 def create_tables():
-    db.drop_all()
     db.create_all()
 
 @app.route('/api/signup', methods=['POST'])
@@ -123,6 +122,7 @@ def addtodo():
         decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
         user_id = decoded['user_id']
     except (IndexError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+
         return jsonify({'message': 'Invalid or expired token'}), 401
 
     data = request.get_json()
@@ -147,9 +147,34 @@ def addtodo():
     return jsonify({'message': 'Todo created successfully'}), 200
 
 
-@app.route('/api/removetodo', methods=['POST'])
-def removetodo():
-    pass
+@app.route('/api/deletetodo/<int:todo_id>', methods=['DELETE'])
+def deletetodo(todo_id):
+
+    auth_header = request.headers.get('Authorization')
+
+    if not auth_header:
+
+        return jsonify({'message': 'Authorization header missing'}), 401
+    try:
+
+        token = auth_header.split(" ")[1]
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded['user_id']
+    except Exception:
+
+        return jsonify({'message': 'Invalid or expired token'}), 401
+
+
+    todo = Todo.query.filter_by(id=todo_id, user_id=user_id).first()
+
+    if not todo:
+
+        return jsonify({'message': 'Todo not found or not yours'}), 404
+
+    db.session.delete(todo)
+    db.session.commit()
+
+    return jsonify({'message': 'Todo deleted successfully'}), 200
 
 # 🔹 Run app
 if __name__ == '__main__':
