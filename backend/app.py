@@ -7,6 +7,8 @@ from models import db, User, Todo
 
 from dotenv import load_dotenv
 import os
+from functools import wraps
+
 
 load_dotenv()
 
@@ -107,23 +109,30 @@ def refresh_token():
 
         return jsonify({'message': 'Invalid refresh token'}), 401
 
+def token_required(f):
 
+    @wraps(f)
+
+    def decorated(*args, **kwargs):
+
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+
+            return jsonify({'message': 'Authorization header missing'}), 401
+        try:
+
+            token = auth_header.split(" ")[1]
+            decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            user_id = decoded['user_id']
+        except (IndexError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+
+            return jsonify({'message': 'Invalid or expired token'}), 401
+        return f(user_id, *args, **kwargs)
+    return decorated
 
 @app.route('/api/addtodo', methods=['POST'])
-def addtodo():
-    auth_header = request.headers.get('Authorization')
-
-    if not auth_header:
-        return jsonify({'message': 'Authorization header missing'}), 401
-
-    try:
-        # Expected format: Bearer <token>
-        token = auth_header.split(" ")[1]
-        decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        user_id = decoded['user_id']
-    except (IndexError, jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-
-        return jsonify({'message': 'Invalid or expired token'}), 401
+@token_required
+def addtodo(user_id):
 
     data = request.get_json()
     title = data.get('title')
@@ -146,24 +155,26 @@ def addtodo():
 
     return jsonify({'message': 'Todo created successfully'}), 200
 
+@app.route('/api/gettodolist/', methods=['GET'])
+@token_required
+def gettodolist(user_id):
+
+    todos = Todo.query.filter_by(user_id=user_id).all()
+
+    todo_list = [{
+        'id': t.id,
+        'title': t.title,
+        'description': t.description,
+        'date': t.date,
+        'time': t.time,
+        'is_done': t.is_done
+    } for t in todos]
+
+    return jsonify(todo_list), 200
 
 @app.route('/api/deletetodo/<int:todo_id>', methods=['DELETE'])
-def deletetodo(todo_id):
-
-    auth_header = request.headers.get('Authorization')
-
-    if not auth_header:
-
-        return jsonify({'message': 'Authorization header missing'}), 401
-    try:
-
-        token = auth_header.split(" ")[1]
-        decoded = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        user_id = decoded['user_id']
-    except Exception:
-
-        return jsonify({'message': 'Invalid or expired token'}), 401
-
+@token_required
+def deletetodo(user_id, todo_id):
 
     todo = Todo.query.filter_by(id=todo_id, user_id=user_id).first()
 
