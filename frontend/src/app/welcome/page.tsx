@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import DateDiv from "../components/DateDiv";
+import AddTodo from "../components/ToDoDiv";
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -52,12 +53,17 @@ export default function WelcomePage() {
             </button>
           </>
         ) : (
-          <button
-            className="border border-blue-500 rounded-xl w-20 hover:bg-blue-100 transition"
-            onClick={handleLogOutClick}
-          >
-            Log out
-          </button>
+            <>
+                <button
+                className="border border-blue-500 rounded-xl w-20 hover:bg-blue-100 transition"
+                onClick={handleLogOutClick}
+                    >
+                Log out
+                </button>
+                <div>
+                    {}
+                </div>
+            </>
         )}
       </div>
 

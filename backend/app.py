@@ -155,23 +155,25 @@ def addtodo(user_id):
 
     return jsonify({'message': 'Todo created successfully'}), 200
 
-@app.route('/api/<int:todo_id>/getttodo', methods = ['GET'])
+@app.route('/api/<int:todo_id>/gettodo', methods = ['GET'])
 @token_required
 def gettodo(user_id, todo_id):
+
+
+    todo = Todo.query.filter_by(id=todo_id, user_id=user_id).first()
 
     if not user_id:
         
         return jsonify({"message": "Unauthorized"}), 401
-    
-    data = request.get_json()
-    
-    todo = [{
-        'title': data.title,
-        'description': data.description,
-        'date': data.date,
-        'time': data.time,
-        'is_done': data.is_done
-    }]
+        
+    return jsonify({
+
+        'title': todo.title,
+        'description': todo.description,
+        'date': todo.date,
+        'time': todo.time,
+        'is_done': todo.is_done
+    })
 
     return jsonify(todo), 200
 
@@ -193,7 +195,34 @@ def gettodolist(user_id):
 
     return jsonify(todo_list), 200
 
-@app.route('/api/todos/<int:todo_id>/toggle_done', methods=['POST'])
+@app.route('/api/<int:todo_id>/updatetodo', methods=['PUT'])
+@token_required
+def updatetodo(user_id, todo_id):
+
+    if not user_id:
+
+        return jsonify({"message": "Unauthorized"}), 401
+
+    data = request.get_json()
+
+    todo = Todo.query.filter_by(id=todo_id, user_id=user_id).first()
+
+    if not todo:
+
+        return jsonify({"message": "Todo not found"}), 404
+
+    todo.title = data.get("title", todo.title)
+    todo.description = data.get("description", todo.description)
+    todo.date = data.get("date", todo.date)
+    todo.time = data.get("time", todo.time)
+    todo.is_done = data.get("is_done", todo.is_done)
+
+    db.session.commit()
+
+    return jsonify({"message": "Todo updated successfully"}), 200
+
+
+@app.route('/api/<int:todo_id>/toggle_done', methods=['POST'])
 @token_required
 def toggle_done(user_id, todo_id):  
 
@@ -217,7 +246,7 @@ def toggle_done(user_id, todo_id):
         "message": "Todo updated successfully"
     }), 200
 
-@app.route('/api/deletetodo/<int:todo_id>', methods=['DELETE'])
+@app.route('/api/<int:todo_id>/deletetodo', methods=['DELETE'])
 @token_required
 def deletetodo(user_id, todo_id):
 

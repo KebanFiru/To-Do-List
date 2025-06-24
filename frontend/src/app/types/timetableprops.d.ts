@@ -1,7 +1,5 @@
 export type TimeTableProps = {
-
-    selectedDate: string | null;
-    onSelect: (value: string) => void;
-    selectedTodo: number|null;
-    onSelectedTodo:(value:number) => void;
-}
+  selectedDate: string | null;
+  onSelectedTodo: (value: number) => void;
+  refreshKey: number; // NEW to re-fetch todos when data changes
+};

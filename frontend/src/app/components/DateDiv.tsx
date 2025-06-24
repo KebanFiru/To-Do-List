@@ -4,40 +4,40 @@ import { useEffect, useState } from "react";
 import { Todo } from "../types/todo";
 import ComboBox from "./ComboBox";
 import TimeTable from "./TimeTable";
+import ToDoDiv from "./ToDoDiv";
 
 export default function DateDiv() {
 
   const [dates, setDates] = useState<string[]>([]);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
-  const [selectedTodo, setSelectedTodo] = useState< number|null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<number | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const triggerRefresh = () => {
+
+    setRefreshKey(prev => prev + 1);
+  }
 
   useEffect(() => {
+
     async function fetchDates() {
 
       const token = localStorage.getItem('token');
-      if (!token) {
 
-        console.error("Token not found");
-        return;
-      }
+      if (!token) throw new Error('Token not found')
+
 
       const res = await fetch('http://localhost:5000/api/gettodolist/', {
 
         method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      if (!res.ok) {
-
-        console.error("Failed to fetch todos");
-        return;
-      }
+      if (!res.ok) throw new Error("Failed to fetch todos")
 
       const data: Todo[] = await res.json();
 
-      const formattedDates: string[] = data.map(todo => {
+      const formattedDates = data.map(todo => {
 
         const [year, month, day] = todo.date.split('-');
         return `${day}/${month}/${year}`;
@@ -50,43 +50,44 @@ export default function DateDiv() {
       const todayFormatted = `${dd}/${mm}/${yyyy}`;
       formattedDates.push(todayFormatted);
 
-      const uniqueDates: string[] = Array.from(new Set(formattedDates));
+      const uniqueDates = Array.from(new Set(formattedDates));
 
       uniqueDates.sort((a, b) => {
 
         const [aDay, aMonth, aYear] = a.split('/').map(Number);
         const [bDay, bMonth, bYear] = b.split('/').map(Number);
 
-        const dateA = new Date(aYear, aMonth - 1, aDay); 
-        const dateB = new Date(bYear, bMonth - 1, bDay);
-
-        return dateA.getTime() - dateB.getTime(); 
-
-        });
+        return new Date(aYear, aMonth - 1, aDay).getTime() - new Date(bYear, bMonth - 1, bDay).getTime();
+      });
 
       setDates(uniqueDates);
     }
 
     fetchDates();
-  }, []);
-
-  console.log(selectedTodo)
+  }, [refreshKey]);
 
   return (
-    <>
-      <div>
-        <ComboBox
-            listOfElements={dates}
-            selected={selectedValue}
-            onSelect={setSelectedValue}
-          />
-        <TimeTable
-          selectedDate={selectedValue}
-          onSelect={setSelectedValue}
-          selectedTodo={selectedTodo}
-          onSelectedTodo={setSelectedTodo}
-        />
-      </div>
-    </>
+    <div className="flex flex-row gap-8 items-start p-4 gap-80"> 
+  <div className="flex flex-col gap-4 w-[300px]">
+    <ComboBox
+      listOfElements={dates}
+      selected={selectedValue}
+      onSelect={setSelectedValue}
+    />
+    <TimeTable
+      selectedDate={selectedValue}
+      onSelectedTodo={setSelectedTodo}
+      refreshKey={refreshKey}
+    />
+  </div>
+  <div className="flex-1">
+    <ToDoDiv
+      selectedTodo={selectedTodo!}
+      selectedDate={selectedValue}
+      triggerRefresh={triggerRefresh}
+      onDeselect={() => setSelectedTodo(null)}
+    />
+  </div>
+</div>
   );
 }
