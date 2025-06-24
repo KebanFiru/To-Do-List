@@ -155,6 +155,27 @@ def addtodo(user_id):
 
     return jsonify({'message': 'Todo created successfully'}), 200
 
+@app.route('/api/<int:todo_id>/getttodo', methods = ['GET'])
+@token_required
+def gettodo(user_id, todo_id):
+
+    if not user_id:
+        
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    data = request.get_json()
+    
+    todo = [{
+        'title': data.title,
+        'description': data.description,
+        'date': data.date,
+        'time': data.time,
+        'is_done': data.is_done
+    }]
+
+    return jsonify(todo), 200
+
+
 @app.route('/api/gettodolist/', methods=['GET'])
 @token_required
 def gettodolist(user_id):
@@ -171,6 +192,30 @@ def gettodolist(user_id):
     } for t in todos]
 
     return jsonify(todo_list), 200
+
+@app.route('/api/todos/<int:todo_id>/toggle_done', methods=['POST'])
+@token_required
+def toggle_done(user_id, todo_id):  
+
+    if not user_id:
+
+        return jsonify({"message": "Unauthorized"}), 401
+
+    data = request.get_json()
+    is_done = data.get('is_done')
+
+    todo = Todo.query.filter_by(id=todo_id, user_id=user_id).first()
+    if not todo:
+        return jsonify({"message": "Todo not found or unauthorized"}), 404
+
+    todo.is_done = is_done
+    db.session.commit()
+
+    return jsonify({
+        "id": todo.id,
+        "is_done": todo.is_done,
+        "message": "Todo updated successfully"
+    }), 200
 
 @app.route('/api/deletetodo/<int:todo_id>', methods=['DELETE'])
 @token_required
