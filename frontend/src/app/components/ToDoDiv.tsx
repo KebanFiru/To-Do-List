@@ -27,7 +27,7 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
       }
 
       const token = localStorage.getItem('token');
-      if (!token) throw new Error('Token not found')
+      if (!token) throw new Error('Token not found');
 
       setLoading(true);
       setError(null);
@@ -35,7 +35,6 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
       try {
 
         const res = await fetch(`http://localhost:5000/api/${selectedTodo}/gettodo`, {
-
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -67,19 +66,19 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
     e.preventDefault();
 
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('Not authenticated')
+    if (!token) throw new Error('Not authenticated');
 
     const payload = { title, description, date, time };
 
     try {
 
       const res = await fetch(
-        selectedTodo ? `http://localhost:5000/api/${selectedTodo}/updatetodo`: 'http://localhost:5000/api/addtodo',
+        selectedTodo? `http://localhost:5000/api/${selectedTodo}/updatetodo`: 'http://localhost:5000/api/addtodo',
         {
 
           method: selectedTodo ? 'PUT' : 'POST',
           headers: {
-            
+
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
@@ -88,7 +87,16 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
       );
 
       if (!res.ok) throw new Error(`${selectedTodo ? 'Update' : 'Add'} failed`);
+
       triggerRefresh();
+
+      setTitle('');
+      setDescription('');
+      setDate(selectedDate || '');
+      setTime('');
+
+      if (onDeselect) onDeselect();
+
     } 
     catch (err: any) {
 
@@ -102,22 +110,26 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
     if (!selectedTodo) return;
 
     const token = localStorage.getItem('token');
-    if (!token) throw new Error('Not authenticated')
+    if (!token) throw new Error('Not authenticated');
 
     try {
 
       const res = await fetch(`http://localhost:5000/api/${selectedTodo}/deletetodo`, {
-
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (!res.ok) throw new Error('Delete failed');
+
       triggerRefresh();
+
       setTitle('');
       setDescription('');
       setDate(selectedDate || '');
       setTime('');
+
+      if (onDeselect) onDeselect();
+
     } 
     catch (err: any) {
 
@@ -127,6 +139,7 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
   };
 
   return (
+    
     <div className="p-6 bg-white rounded shadow w-full max-w-2xl min-w-[400px]">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
@@ -181,23 +194,23 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
 
           {selectedTodo && (
             <>
-                <button
+              <button
                 type="button"
                 onClick={handleDelete}
                 className="bg-red-500 text-white font-medium py-2 px-4 rounded hover:bg-red-600"
-                >
+              >
                 Remove
-                </button>
+              </button>
 
-                <button
+              <button
                 type="button"
                 onClick={onDeselect}
                 className="bg-gray-400 text-white font-medium py-2 px-4 rounded hover:bg-gray-500"
-                >
+              >
                 Deselect
-                </button>
+              </button>
             </>
-            )}
+          )}
         </div>
       </form>
     </div>

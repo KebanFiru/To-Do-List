@@ -18,7 +18,6 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
   useEffect(() => {
 
     if (!token || !selectedDate) {
-
       setGroupedTodos({});
       return;
     }
@@ -49,10 +48,10 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
         filteredTodos.forEach(todo => {
 
           const timeStr = String(todo.time);
-          if (!timeGroups[timeStr]){
+          if (!timeGroups[timeStr]) {
 
             timeGroups[timeStr] = [];
-          } 
+          }
           timeGroups[timeStr].push(todo);
         });
 
@@ -68,7 +67,6 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
         );
 
         const sortedGrouped: { [time: string]: Todo[] } = {};
-
         sortedEntries.forEach(([time, todos]) => {
 
           sortedGrouped[time] = todos;
@@ -99,8 +97,10 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
     try {
 
       const res = await fetch(`http://localhost:5000/api/todos/${todo.id}/toggle_done`, {
+
         method: 'POST',
         headers: {
+
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -115,32 +115,50 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
 
       setGroupedTodos(prev => {
 
-        const newGrouped = { ...prev };
-        Object.entries(newGrouped).forEach(([time, todos]) => {
+        const newGrouped: { [time: string]: Todo[] } = {};
+        Object.entries(prev).forEach(([time, todos]) => {
 
           newGrouped[time] = todos.map(t =>
 
             t.id === todo.id ? { ...t, is_done: updatedStatus } : t
           );
         });
-        return newGrouped;
-      });
 
-    } 
-    catch (error) {
+        // Step 2: re-sort times
+        const timeToMinutes = (timeStr: string) => {
+
+          const [h, m] = timeStr.split(':').map(Number);
+          return h * 60 + m;
+        };
+
+        const sortedEntries = Object.entries(newGrouped).sort(
+
+          ([a], [b]) => timeToMinutes(a) - timeToMinutes(b)
+        );
+
+        const sortedGrouped: { [time: string]: Todo[] } = {};
+        sortedEntries.forEach(([time, todos]) => {
+
+          sortedGrouped[time] = todos;
+        });
+
+        return sortedGrouped;
+      });
+    } catch (error) {
 
       console.error('Error updating todo:', error);
     }
   };
 
   const toDoClick = (id: number) => {
-    
+
     onSelectedTodo(id);
   };
 
   if (token === null) return null;
 
   return (
+    
     <div className="w-full space-y-4">
       {loading && <p className="text-center text-gray-500">Loading todos...</p>}
       {!loading && Object.entries(groupedTodos).length === 0 && (
