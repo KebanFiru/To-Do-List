@@ -9,7 +9,7 @@ export default function DateDiv() {
 
   const [dates, setDates] = useState<string[]>([]);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
-  const [selectedTime, setSelectedTime] = useState< string|null>(null);
+  const [selectedTodo, setSelectedTodo] = useState< number|null>(null);
 
   useEffect(() => {
     async function fetchDates() {
@@ -70,21 +70,23 @@ export default function DateDiv() {
     fetchDates();
   }, []);
 
+  console.log(selectedTodo)
+
   return (
     <>
-      <div className="flex">
+      <div>
         <ComboBox
-          listOfElements={dates}
-          selected={selectedValue}
+            listOfElements={dates}
+            selected={selectedValue}
+            onSelect={setSelectedValue}
+          />
+        <TimeTable
+          selectedDate={selectedValue}
           onSelect={setSelectedValue}
+          selectedTodo={selectedTodo}
+          onSelectedTodo={setSelectedTodo}
         />
       </div>
-      <TimeTable
-        selectedDate={selectedValue}
-        onSelect={setSelectedValue}
-        selectedTime={selectedTime}
-        onTimeSelect={setSelectedTime}
-      />
     </>
   );
 }
