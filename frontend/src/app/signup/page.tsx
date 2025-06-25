@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function SignUpPage() {
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -12,13 +15,14 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
+    
     e.preventDefault();
     setErrorMsg('');
     setLoading(true);
 
     try {
 
-      const res = await fetch('http://localhost:5000/api/signup', {
+      const res = await fetch(`${apiUrl}/api/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
@@ -44,6 +48,7 @@ export default function SignUpPage() {
   };
 
   return (
+    
     <div className="max-w-md mx-auto mt-20 p-6 border rounded shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
       <form onSubmit={handleSignUp} className="flex flex-col gap-4">

@@ -6,6 +6,8 @@ import { Todo } from '../types/todo';
 
 export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, onDeselect }: ToDoDivProps) {
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(selectedDate || '');
@@ -34,7 +36,7 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
 
       try {
 
-        const res = await fetch(`http://localhost:5000/api/${selectedTodo}/gettodo`, {
+        const res = await fetch(`${apiUrl}/api/${selectedTodo}/gettodo`, {
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -73,7 +75,7 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
     try {
 
       const res = await fetch(
-        selectedTodo? `http://localhost:5000/api/${selectedTodo}/updatetodo`: 'http://localhost:5000/api/addtodo',
+        selectedTodo? `${apiUrl}/api/${selectedTodo}/updatetodo`: '${apiUrl}/api/addtodo',
         {
 
           method: selectedTodo ? 'PUT' : 'POST',
@@ -114,7 +116,7 @@ export default function ToDoDiv({ selectedTodo, selectedDate, triggerRefresh, on
 
     try {
 
-      const res = await fetch(`http://localhost:5000/api/${selectedTodo}/deletetodo`, {
+      const res = await fetch(`${apiUrl}/api/${selectedTodo}/deletetodo`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

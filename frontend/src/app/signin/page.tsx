@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function SignInPage() {
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,7 +19,7 @@ export default function SignInPage() {
 
     try {
 
-      const res = await fetch('http://localhost:5000/api/signin', {
+      const res = await fetch(`${apiUrl}/api/signin`, {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

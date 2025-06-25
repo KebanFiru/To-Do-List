@@ -6,6 +6,8 @@ import { Todo } from "../types/todo";
 
 export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: TimeTableProps) {
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const [token, setToken] = useState<string | null>(null);
   const [groupedTodos, setGroupedTodos] = useState<{ [time: string]: Todo[] }>({});
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
 
       try {
 
-        const res = await fetch('http://localhost:5000/api/gettodolist/', {
+        const res = await fetch(`${apiUrl}/api/gettodolist`, {
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -96,7 +98,7 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
 
     try {
 
-      const res = await fetch(`http://localhost:5000/api/todos/${todo.id}/toggle_done`, {
+      const res = await fetch(`${apiUrl}/api/todos/${todo.id}/toggle_done`, {
 
         method: 'POST',
         headers: {
