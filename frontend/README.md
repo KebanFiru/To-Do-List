@@ -43,4 +43,3 @@ Start this codes in order
 
 Now you can see your frontend in your browser with URL http://localhost:3000
 
-[-> For backend instructions <-](backend\README.md)
