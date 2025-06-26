@@ -105,8 +105,8 @@ If there is a list of the packages we installed earlier, we can continue the pro
 ```bash
 DATABASE_URL= mysql://username:password@host:port/database_name 
 
-SECRET_KEY = yoursecretkeyforhashingpasswords
-REFRESH_KEY = yourrefreshkeyforhashingpasswords
+SECRET_KEY = yoursecretkeyforverificationtoken
+REFRESH_KEY = yourrefreshkeyforverificationtoken
 ```
 
 3- Open a terminal inside your backend folder 
