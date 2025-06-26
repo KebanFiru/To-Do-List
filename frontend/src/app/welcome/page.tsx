@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 import DateDiv from "../components/DateDiv";
-import AddTodo from "../components/ToDoDiv";
 
 export default function WelcomePage() {
   const router = useRouter();
