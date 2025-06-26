@@ -4,7 +4,7 @@ Follow this instructions step by step for make frontend works correct.
 
 1- Open a terminal inside frontend folder
 
-2- Run this code in terminal(Make sure Node and npm is installed in your computer)
+2- Run this command in terminal(Make sure Node and npm is installed in your computer)
 
 ```bash
 npm i
@@ -21,7 +21,7 @@ NEXT_PUBLIC_API_URL= urlforbackend
 
 1- Open a terminal inside frontend folder
 
-2- Run this code on terminal
+2- Run this command on terminal
 
 ```bash
 npm run dev
@@ -32,14 +32,14 @@ Now you can see your frontend in your browser with URL http://localhost:3000
 
 1- Open a terminal inside frontend folder
 
-2- Run this code on terminal
+2- Run this commands on terminal
 
 ```bash
 npm run build
 
 npm run start
 ```
-Start this codes in order
+Write this commands in order
 
 Now you can see your frontend in your browser with URL http://localhost:3000
 
