@@ -6,6 +6,6 @@ For further develop project or start the code locally on your server follow this
 
 Instructions:
 
-- For [frontend](frontend\README.md)
+- For [frontend](.\frontend\README.md)
 
-- For [backend](backend\README.md)
+- For [backend](.\backend\README.md)
