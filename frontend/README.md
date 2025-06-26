@@ -4,7 +4,7 @@ Follow this instructions step by step for make frontend works correct.
 
 1- Open a terminal inside frontend folder
 
-2- Run this command in terminal(Make sure Node and npm is installed in your computer)
+2- Run this command in terminal(Make sure [Nodejs](https://nodejs.org/tr) and npm is installed in your computer)
 
 ```bash
 npm i

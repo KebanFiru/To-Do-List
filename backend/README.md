@@ -6,7 +6,7 @@ Follow this instructions step by step for make backend works correct.
 
 1- Open a terminal
 
-2- Write this command to terminal
+2- Write this command to terminal(Make sure [MySQL](https://www.mysql.com/) is installed )
 
 ```bash
 mysql -u mysqlusername -p
@@ -38,7 +38,7 @@ EXIT;
 
 ## Python Part
 
-Make sure your Python version is 3.7.x 
+Make sure your [Python](https://www.python.org/) version is 3.7.x 
 
 For check your Python version write this in your terminal 
 
