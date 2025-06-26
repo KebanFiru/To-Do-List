@@ -126,7 +126,6 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
           );
         });
 
-        // Step 2: re-sort times
         const timeToMinutes = (timeStr: string) => {
 
           const [h, m] = timeStr.split(':').map(Number);
@@ -160,7 +159,6 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
   if (token === null) return null;
 
   return (
-    
     <div className="w-full space-y-4">
       {loading && <p className="text-center text-gray-500">Loading todos...</p>}
       {!loading && Object.entries(groupedTodos).length === 0 && (

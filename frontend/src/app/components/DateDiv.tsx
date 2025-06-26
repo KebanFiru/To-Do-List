@@ -25,9 +25,7 @@ export default function DateDiv() {
     async function fetchDates() {
 
       const token = localStorage.getItem('token');
-
       if (!token) throw new Error('Token not found')
-
 
       const res = await fetch(`${APIURL}/api/gettodolist/`, {
 
@@ -55,10 +53,9 @@ export default function DateDiv() {
       const uniqueDates = Array.from(new Set(formattedDates));
 
       uniqueDates.sort((a, b) => {
-
+        
         const [aDay, aMonth, aYear] = a.split('/').map(Number);
         const [bDay, bMonth, bYear] = b.split('/').map(Number);
-
         return new Date(aYear, aMonth - 1, aDay).getTime() - new Date(bYear, bMonth - 1, bDay).getTime();
       });
 
@@ -69,27 +66,27 @@ export default function DateDiv() {
   }, [refreshKey]);
 
   return (
-    <div className="flex flex-row gap-8 items-start p-4 gap-80"> 
-  <div className="flex flex-col gap-4 w-[300px]">
-    <ComboBox
-      listOfElements={dates}
-      selected={selectedValue}
-      onSelect={setSelectedValue}
-    />
-    <TimeTable
-      selectedDate={selectedValue}
-      onSelectedTodo={setSelectedTodo}
-      refreshKey={refreshKey}
-    />
-  </div>
-  <div className="flex-1">
-    <ToDoDiv
-      selectedTodo={selectedTodo!}
-      selectedDate={selectedValue}
-      triggerRefresh={triggerRefresh}
-      onDeselect={() => setSelectedTodo(null)}
-    />
-  </div>
-</div>
+    <div className="flex flex-row items-start p-4 gap-12 max-w-5xl mx-auto w-full">
+      <div className="flex flex-col gap-6 w-full max-w-lg">
+        <ComboBox
+          listOfElements={dates}
+          selected={selectedValue}
+          onSelect={setSelectedValue}
+        />
+        <TimeTable
+          selectedDate={selectedValue}
+          onSelectedTodo={setSelectedTodo}
+          refreshKey={refreshKey}
+        />
+      </div>
+      <div className="flex-1">
+        <ToDoDiv
+          selectedTodo={selectedTodo!}
+          selectedDate={selectedValue}
+          triggerRefresh={triggerRefresh}
+          onDeselect={() => setSelectedTodo(null)}
+        />
+      </div>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { ComboBoxProps } from '../types/comboboxprops';
+import { useEffect, useState } from "react";
+import { ComboBoxProps } from "../types/comboboxprops";
 
 export default function ComboBox({ listOfElements, selected, onSelect }: ComboBoxProps) {
 
@@ -72,7 +72,8 @@ export default function ComboBox({ listOfElements, selected, onSelect }: ComboBo
   const filteredElements = listOfElements;
 
   return (
-    <div className="relative w-72 p-4">
+    
+    <div className="relative w-1/2"> 
       <input
         type="text"
         value={query}
@@ -81,14 +82,14 @@ export default function ComboBox({ listOfElements, selected, onSelect }: ComboBo
           setShowDropdown(true);
         }}
         onFocus={() => setShowDropdown(true)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 100)}
-        className="w-full border border-gray-300 rounded px-3 py-2 p-4 box-border"
+        onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+        className="w-full border border-gray-300 rounded-md px-4 py-2 text-lg focus:outline-blue-500 focus:ring-2 focus:ring-blue-300 box-border transition"
         placeholder="Select a date"
       />
       {showDropdown && (
-        <ul className="z-10 w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto shadow absolute box-border p-4">
+        <ul className="z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-52 overflow-y-auto shadow-lg absolute box-border p-2">
           {filteredElements.length === 0 ? (
-            <li className="p-2 text-gray-500">No results</li>
+            <li className="p-2 text-gray-500 text-center">No results</li>
           ) : (
             filteredElements.map((element) => {
               const isToday = element === todayDisplay;
@@ -97,10 +98,10 @@ export default function ComboBox({ listOfElements, selected, onSelect }: ComboBo
                 <li
                   key={element}
                   onMouseDown={() => handleSelect(element)}
-                  className="p-2 hover:bg-blue-100 cursor-pointer flex justify-between"
+                  className="p-2 cursor-pointer flex justify-between rounded hover:bg-blue-100 transition"
                 >
                   <span>{element}</span>
-                  <span className="text-gray-500 ml-2">{weekday} {isToday && '(today)'}</span>
+                  <span className="text-gray-400 ml-2 italic text-sm">{weekday} {isToday && '(today)'}</span>
                 </li>
               );
             })
