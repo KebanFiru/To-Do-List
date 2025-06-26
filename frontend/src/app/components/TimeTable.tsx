@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { TimeTableProps } from "../types/timetableprops";
 import { Todo } from "../types/todo";
 
-export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: TimeTableProps) {
+const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: TimeTableProps) {
 
   const [token, setToken] = useState<string | null>(null);
   const [groupedTodos, setGroupedTodos] = useState<{ [time: string]: Todo[] }>({});
@@ -30,7 +30,7 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
 
       try {
 
-        const res = await fetch(`${apiUrl}/api/gettodolist`, {
+        const res = await fetch(`${APIURL}/api/gettodolist`, {
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -98,7 +98,7 @@ export default function TimeTable({ selectedDate, onSelectedTodo, refreshKey }: 
 
     try {
 
-      const res = await fetch(`${apiUrl}/api/todos/${todo.id}/toggle_done`, {
+      const res = await fetch(`${APIURL}/api/${todo.id}/toggle_done`, {
 
         method: 'POST',
         headers: {

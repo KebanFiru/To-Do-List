@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 import jwt, datetime
 
 from models import db, User, Todo
@@ -30,6 +31,7 @@ def create_tables():
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
+
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
@@ -43,10 +45,13 @@ def signup():
     
     if User.query.filter_by(username=username).first():
         return jsonify({'message': 'User already exists'}), 409
+    
+    hashedPassword = generate_password_hash(password)
 
-    new_user = User(username=username, email=email, password = password)
+    new_user = User(username=username, email=email, password = hashedPassword)
     db.session.add(new_user)
     db.session.commit()
+
     return jsonify({'message': f'User {username} added'}), 201
 
 
@@ -65,24 +70,29 @@ def signin():
 
     password = data.get('password')
 
-    if user.password != password:
-        
-        return jsonify({'message': 'User not found'}), 404
+    if user and check_password_hash(user.password, password):
+
+        token = jwt.encode({
+
+            'user_id' : user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+            }, SECRET_KEY, algorithm='HS256')
+
+        refresh_token = jwt.encode({
+
+            'user_id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=90)
+        }, REFRESH_KEY, algorithm='HS256')
+
+        response = jsonify({'access_token': token})
+        response.set_cookie('refresh_token', refresh_token, httponly=True,samesite='Strict', secure=False)
+
+        return response
+    else:
+
+        return jsonify({"message":"Invalid credentials"}),401
     
-    token = jwt.encode({
-        'user_id' : user.id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-    }, SECRET_KEY, algorithm='HS256')
-
-    refresh_token = jwt.encode({
-        'user_id': user.id,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=90)
-    }, REFRESH_KEY, algorithm='HS256')
-
-    response = jsonify({'access_token': token})
-    response.set_cookie('refresh_token', refresh_token, httponly=True,samesite='Strict', secure=False)
-
-    return response
+    
 
 @app.route('/api/refresh', methods=['POST'])
 def refresh_token():
@@ -96,6 +106,7 @@ def refresh_token():
 
         data = jwt.decode(refresh_token, REFRESH_KEY, algorithms=['HS256'])
         new_access_token = jwt.encode({
+
             'user_id': data['user_id'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
         }, SECRET_KEY, algorithm='HS256')

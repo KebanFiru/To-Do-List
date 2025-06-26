@@ -6,9 +6,9 @@ import ComboBox from "./ComboBox";
 import TimeTable from "./TimeTable";
 import ToDoDiv from "./ToDoDiv";
 
-export default function DateDiv() {
+const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+export default function DateDiv() {
 
   const [dates, setDates] = useState<string[]>([]);
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
@@ -29,7 +29,7 @@ export default function DateDiv() {
       if (!token) throw new Error('Token not found')
 
 
-      const res = await fetch(`{apiUrl}/api/gettodolist/`, {
+      const res = await fetch(`${APIURL}/api/gettodolist/`, {
 
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }

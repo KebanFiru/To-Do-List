@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function SignUpPage() {
+const APIURL = process.env.NEXT_PUBLIC_API_URL;
 
-  const apiUrl = process.env.REACT_APP_API_URL;
+export default function SignUpPage() {
 
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -22,7 +22,7 @@ export default function SignUpPage() {
 
     try {
 
-      const res = await fetch(`${apiUrl}/api/signup`, {
+      const res = await fetch(`${APIURL}/api/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),

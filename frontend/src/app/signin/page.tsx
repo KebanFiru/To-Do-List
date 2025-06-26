@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const APIURL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function SignInPage() {
 
-  const apiUrl = process.env.REACT_APP_API_URL;
 
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -19,7 +20,7 @@ export default function SignInPage() {
 
     try {
 
-      const res = await fetch(`${apiUrl}/api/signin`, {
+      const res = await fetch(`${APIURL}/api/signin`, {
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
